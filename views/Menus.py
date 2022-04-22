@@ -19,7 +19,7 @@ class Menus(Actions):
         self.shortcuts()
 
     def _actions(self):
-        media_actions = [self.media_open, self.media_exit]
+        media_actions = [self.media_open, self.media_refresh, self.media_exit]
         playback_actions = [self.playback_play, self.playback_pause, self.playback_stop, self.playback_prev,
                             self.playback_next]
         sound_actions = [self.sound_increase, self.sound_decrease, self.sound_mute]

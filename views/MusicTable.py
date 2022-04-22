@@ -8,9 +8,8 @@ class MusicTable(QTreeView):
         super(MusicTable, self).__init__()
 
         self.controller = controller
-        self.model = self.controller.model
 
-        self.titles = self.model.musics_table_titles
+        self.titles = self.controller.model.musics_table_titles
         self.title_size = len(self.titles)
         self.tableModel = QStandardItemModel(0, self.title_size)
 

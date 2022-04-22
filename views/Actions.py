@@ -8,6 +8,7 @@ class Actions:
         self.model = self.controller.model
 
         self.media_open = QAction(self.model.open_icon, "Medya Aç")
+        self.media_refresh = QAction(self.model.refresh_icon, "Yenile")
         self.media_exit = QAction(self.model.exit_icon, "Çık")
 
         self.playback_play = QAction(self.model.play_icon, "Oynat")
@@ -34,14 +35,14 @@ class Actions:
 
     def disable(self):
         self.playback_play.setEnabled(True)
-        self.playback_pause.setDisabled(False)
+        self.playback_pause.setEnabled(False)
         self.playback_stop.setEnabled(False)
         self.playback_prev.setEnabled(False)
         self.playback_next.setEnabled(False)
 
     def enable(self):
         self.playback_play.setEnabled(False)
-        self.playback_pause.setDisabled(True)
+        self.playback_pause.setEnabled(True)
         self.playback_stop.setEnabled(True)
         self.playback_prev.setEnabled(True)
         self.playback_next.setEnabled(True)
@@ -83,6 +84,7 @@ class Actions:
 
     def _triggers(self):
         self.media_open.triggered.connect(self.controller.action_media_open)
+        self.media_refresh.triggered.connect(self.controller.reload_tables)
         self.media_exit.triggered.connect(self.controller.action_media_exit)
 
         self.playback_play.triggered.connect(self.controller.action_play)

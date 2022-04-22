@@ -1,4 +1,9 @@
-from PyQt5.QtWidgets import QMessageBox, QTreeView
+import os
+import time
+
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from PyQt5.QtWidgets import QMessageBox
 
 from model.model import Model
 from views.MainWindow import MainWindow
@@ -33,26 +38,35 @@ class MainController:
 
     # table loaders
 
-    def music_files(self) -> list:
-        return []
-
     def remove_data(self) -> None:
         self.table.tableModel.setRowCount(0)
 
     def append_data(self, data: list) -> None:
         self.table.tableModel.insertRow(0)
 
-        for i in range(len(data)):
-            self.table.tableModel.setData(self.table.tableModel.index(0, i), data[i])
+        for datum in data:
+            for i in range(len(datum)):
+                self.table.tableModel.setData(self.table.tableModel.index(0, i), datum[i])
 
     def reload_tables(self) -> None:
         #  get data
-        data = self.music_files()
-
         # remove old ones
-        self.remove_data()
-
         # load data into tables
+
+        data = []
+        files = self.model.music_files(self.model.directory)
+        tmp_player = QMediaPlayer()
+
+        for file in files:
+            tmp_player.setMedia(QMediaContent(QUrl.fromLocalFile(file)))
+
+            name = os.path.basename(file).split('.mp3')[0]
+            duration = tmp_player.duration()
+            date = time.ctime(os.stat(file).st_ctime)
+            datum = [name, duration, date]
+            data.append(datum)
+
+        self.remove_data()
         self.append_data(data)
 
     # table listeners
@@ -76,13 +90,22 @@ class MainController:
         return True if ask == QMessageBox.Yes else False
 
     def action_play(self) -> None:
-        pass
+        self.toolBar.enable()
+        self.menus.enable()
+        self.model.mediaPlayer.play()
 
     def action_pause(self) -> None:
-        pass
+        if self.model.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            print(self.model.mediaPlayer.position())
+            self.model.mediaPlayer.pause()
+            self.toolBar.disable()
+            self.menus.disable()
 
     def action_stop(self) -> None:
-        pass
+        if self.model.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.model.mediaPlayer.stop()
+            self.toolBar.disable()
+            self.menus.disable()
 
     def action_prev(self) -> None:
         pass
@@ -91,13 +114,13 @@ class MainController:
         pass
 
     def action_increase_sound(self) -> None:
-        pass
+        self.model.mediaPlayer.setVolume(self.model.mediaPlayer.volume() + 5)
 
     def action_decrease_sound(self) -> None:
-        pass
+        self.model.mediaPlayer.setVolume(self.model.mediaPlayer.volume() - 5)
 
     def action_mute_sound(self) -> None:
-        pass
+        self.model.mediaPlayer.setMuted(True)
 
     def action_view_full(self) -> None:
         if self.mainWindow.isFullScreen():

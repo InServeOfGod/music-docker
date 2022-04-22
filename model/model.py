@@ -2,6 +2,7 @@ import json
 import os
 
 from PyQt5.QtGui import QIcon
+from PyQt5.QtMultimedia import QMediaPlayer
 
 
 class Model:
@@ -10,7 +11,10 @@ class Model:
         self.config = self.read()
 
         self.title = "Music Docker"
-        self.musics_table_titles = ["İSİM", "OYNATMA SÜRESİ", "ALBÜM", "SANATÇI", "TARİH"]
+        self.directory = os.path.expanduser('~/Music')
+        self.musics_table_titles = ["İSİM", "OYNATMA SÜRESİ", "TARİH"]
+
+        self.mediaPlayer = QMediaPlayer()
 
         self.selected_row = None
         self.selected_id = None
@@ -23,6 +27,7 @@ class Model:
 
         # media
         self.open_icon = QIcon(os.path.join(self.img_assets, "folder-open-document-music.png"))
+        self.refresh_icon = QIcon(os.path.join(self.img_assets, "arrow-circle-315.png"))
         self.exit_icon = QIcon(os.path.join(self.img_assets, "door-open-in.png"))
 
         # playback
@@ -104,3 +109,19 @@ class Model:
             with open(os.path.join(self.css_assets, "{}.min.css".format('dark'))) as f:
                 return f.read()
         return None
+
+    def music_files(self, directory='.') -> list:
+        """
+        Belirtilen Klasördeki mp3 dosyalarını listeler
+        :return:
+        :rtype: list
+        """
+        data = []
+
+        for root, dirs, files in os.walk(directory):
+            if root == directory:
+                for file in files:
+                    if file.endswith(".mp3"):
+                        data.append(str(os.path.join(self.directory, file)))
+
+        return data

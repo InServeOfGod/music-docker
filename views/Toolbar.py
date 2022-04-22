@@ -11,7 +11,6 @@ class Toolbar(Actions):
         self.controller = controller
         self.win = self.controller.mainWindow
         self.toolbar = QToolBar()
-        self.toolbar.setMovable(False)
 
         self._actions()
 
@@ -23,5 +22,6 @@ class Toolbar(Actions):
         self.toolbar.addAction(self.playback_next)
 
     def main(self):
+        self.toolbar.setMovable(False)
         self.toolbar.setIconSize(QSize(16, 16))
         self.win.addToolBar(self.toolbar)
